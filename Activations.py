@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class Activation:
 
     def sigmoid(self, Z):
