@@ -24,8 +24,6 @@ class NeuralNetwork:
         parameters -- parameters learnt by the model. They can then be used to predict.
         """
 
-        np.random.seed (1)
-
         # save network parameters and hyper parameters
         self.X = X
         self.Y = Y
@@ -48,12 +46,12 @@ class NeuralNetwork:
                         bl -- bias vector of shape (layer_dims[l], 1)
         """
 
-        np.random.seed(3)
+        np.random.seed(7)
         parameters = {}
         L = len(layer_dims)  # number of layers in the network
 
         for l in range (1, L):
-            parameters['W' + str (l)] = np.random.randn (layer_dims[l], layer_dims[l - 1]) * 0.01
+            parameters['W' + str (l)] = np.random.randn (layer_dims[l], layer_dims[l - 1]) * np.sqrt(1 / self.X.shape[1])
             parameters['b' + str (l)] = np.zeros ((layer_dims[l], 1))
 
         return parameters
@@ -106,7 +104,7 @@ class NeuralNetwork:
 
         return A, cache
 
-    def deep_model_forward(self, X):
+    def deep_model_forward(self, X=None):
         """
         Implement forward propagation for the [LINEAR->RELU]*(L-1)->LINEAR->SIGMOID computation
 
@@ -122,7 +120,8 @@ class NeuralNetwork:
         """
 
         caches = []
-        A = X
+
+        A = self.X if X is None else X
         L = len(self.parameters) // 2  # number of layers in the neural network
 
         for l in range(1, L):
@@ -298,7 +297,7 @@ class NeuralNetwork:
         for i in range(0, self.num_iterations):
 
             # Forward propagation: [LINEAR -> RELU]*(L-1) -> LINEAR -> SIGMOID.
-            AL, caches = self.deep_model_forward(self.X)
+            AL, caches = self.deep_model_forward()
 
             # Compute cost.
             cost = self.compute_cost(AL, self.Y)
@@ -310,12 +309,12 @@ class NeuralNetwork:
             self.parameters = self.update_parameters(self.parameters, grads, self.learning_rate)
 
             # Print the cost every 100 training example
-            if self.print_cost and i % 10 == 0:
+            if self.print_cost and i % 1 == 0:
                 print("Cost after iteration %i: %f" % (i, cost))
-            if self.print_cost and i % 10 == 0:
+            if self.print_cost and i % 1 == 0:
                 costs.append(cost)
 
-            if X_val is not None and Y_val is not None and i % 10 == 0:
+            if X_val is not None and Y_val is not None and i % 1 == 0:
                 AL_val, caches_val = self.deep_model_forward(X_val)
                 val_cost = self.compute_cost(AL_val, Y_val)
                 if val_cost < min_cost:
@@ -325,8 +324,8 @@ class NeuralNetwork:
 
 
         # plot the cost
-        plt.plot(np.squeeze(costs))
-        plt.ylabel('cost')
-        plt.xlabel('iterations (per tens)')
-        plt.title("Learning rate =" + str(self.learning_rate))
-        plt.show()
+        # plt.plot(np.squeeze(costs))
+        # plt.ylabel('cost')
+        # plt.xlabel('iterations (per tens)')
+        # plt.title("Learning rate =" + str(self.learning_rate))
+        # plt.show()
